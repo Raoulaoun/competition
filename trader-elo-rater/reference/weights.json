@@ -1,0 +1,78 @@
+{
+  "_standard": "Trading League Rating Standard v2. Pillars and weights are locked; identical across Projected and Confirmed states. Confirmed mode routes extra metrics (MAE, floating DD, concurrent exposure) into the preservation/hygiene pillars without re-weighting.",
+
+  "normalization": "rank",
+
+  "engine": {
+    "base_rating": 1500,
+    "start_rd": 350,
+    "start_vol": 0.06,
+    "tau": 0.4,
+    "rd_floor_projected": 190,
+    "rd_floor_confirmed": 50,
+    "display": "R - 2*RD"
+  },
+
+  "pillars": {
+    "risk_adjusted": {
+      "weight": 0.28,
+      "metrics": {
+        "sortino":          {"w": 0.5, "direction": 1},
+        "sharpe":           {"w": 0.2, "direction": 1},
+        "return_over_maxdd":{"w": 0.3, "direction": 1}
+      }
+    },
+    "capital_preservation": {
+      "weight": 0.28,
+      "metrics": {
+        "max_drawdown":   {"w": 0.5, "direction": 1, "_note": "stored negative; closer to 0 is better"},
+        "ulcer_index":    {"w": 0.3, "direction": -1},
+        "recovery_factor":{"w": 0.2, "direction": 1}
+      }
+    },
+    "payoff_discipline": {
+      "weight": 0.22,
+      "metrics": {
+        "profit_factor":    {"w": 0.30, "direction": 1},
+        "payoff_ratio":     {"w": 0.25, "direction": 1},
+        "expectancy":       {"w": 0.25, "direction": 1},
+        "largest_loss_pct": {"w": 0.20, "direction": 1, "_note": "stored negative; smaller loss is better"}
+      }
+    },
+    "return_alpha": {
+      "weight": 0.10,
+      "metrics": {
+        "net_return_pct": {"w": 1.0, "direction": 1}
+      }
+    },
+    "consistency": {
+      "weight": 0.07,
+      "metrics": {
+        "equity_linearity":  {"w": 0.6, "direction": 1},
+        "trade_return_std":  {"w": 0.4, "direction": -1}
+      }
+    },
+    "behavioral_hygiene": {
+      "weight": 0.05,
+      "metrics": {
+        "peak_leverage":        {"w": 0.6, "direction": -1},
+        "leverage_consistency": {"w": 0.4, "direction": -1}
+      }
+    }
+  },
+
+  "eligibility": {
+    "min_trade_count": 5,
+    "stop_out_equity_pct": 0.0,
+    "_note": "DQ on negative ending balance OR equity low breaching stop_out_equity_pct of starting balance. Set stop_out_equity_pct to your broker's actual stop-out level (e.g. 0.20 for a 20% equity floor). 0.0 means only a true negative-balance blowout disqualifies. DQ'd traders are scored and shown but excluded from the ladder and Glicko update unless include_dq is set."
+  },
+
+  "tiers": [
+    {"min": 1900, "name": "Apex",        "note": "confirmed-only by construction"},
+    {"min": 1750, "name": "Diamond",     "note": "effectively confirmed-only"},
+    {"min": 1600, "name": "Gold",        "note": "top tier reachable while Projected"},
+    {"min": 1450, "name": "Silver",      "note": ""},
+    {"min": 1300, "name": "Bronze",      "note": ""},
+    {"min": -99999, "name": "Provisional","note": "new / unproven / recently inactive"}
+  ]
+}
