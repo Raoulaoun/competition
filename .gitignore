@@ -1,0 +1,36 @@
+# Secrets and credentials — NEVER commit these
+.env
+.env.*
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+credentials*.json
+
+# Node
+node_modules/
+.next/
+dist/
+build/
+out/
+.turbo/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+.mypy_cache/
+
+# Supabase local state (contains auth tokens)
+.supabase/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
