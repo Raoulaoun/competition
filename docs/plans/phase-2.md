@@ -355,25 +355,19 @@ writes CSV/JSON for the offline xlsx path).
 
 ---
 
-## Open questions for review
+## Decisions locked before implementation
 
-1. **`raw_deals` schema** — the postgres adapter is stubbed until Phase 1 lands.
-   Should Phase 2 define the `Deal` dataclass now as the schema contract, and Phase 1
-   builds its migration to match? (Recommended — avoid a reconciliation step.)
+1. **`raw_deals` schema** — `Deal` dataclass is the canonical contract. Phase 1's
+   `raw_deals` table conforms to it. Documented in `/docs/contracts/deal.md`.
 
-2. **`blowup_flag` threshold** — currently hardcoded in `extract.py` as
-   `end_balance ≤ 0.10 × start_balance`. Should this move to `weights.json`
-   alongside `stop_out_equity_pct`, or stay as a fixed constant? It's a formula
-   invariant, not a tunable config, but worth confirming.
+2. **`blowup_threshold_pct`** — moved to `weights.json` alongside `stop_out_equity_pct`.
+   Default 0.10 (10%). `compute_metrics` returns raw `end_balance`/`start_balance`;
+   `apply_gate` applies the threshold from `EligibilityConfig`. The hardcoded
+   `blowup_flag` field is removed from `MetricVector`.
 
-3. **`report.py`** — excluded from the service. Will it stay in the `trader-elo-rater`
-   folder as a standalone tool, or move somewhere else in the monorepo?
+3. **`report.py`** — stays in `trader-elo-rater` as the standalone offline PDF tool.
+   Excluded from `services/scoring`.
 
-4. **Division-specific configs** — CLAUDE.md mentions Scalping / Day / Swing /
-   Investing divisions each have their own scoring config. Phase 2 uses one config.
-   Should `ScoringConfig` already support a per-division override layer, or is
-   one-config-fits-all acceptable until Phase 7 (operator console)?
-
----
-
-**Awaiting your review before implementing.**
+4. **Division configs** — one global config for now. `load_config(path, division=None)`
+   supports an optional `"divisions"` key in `weights.json` for future per-division
+   overrides without touching scoring call sites.

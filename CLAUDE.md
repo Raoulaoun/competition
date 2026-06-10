@@ -67,4 +67,5 @@ Data flow: `ingestion → db (raw deals) → scoring → db (scores/ranks) → c
 - `/docs/build_plan.md` — phased slice-by-slice build sequence (read this first).
 - `/docs/operating_model.md` — business/revenue model and why decisions are what they are.
 - `/docs/widgets.md` — widget list, purposes, fixed vs. closable.
+- `/docs/contracts/deal.md` — canonical Deal shape; `raw_deals` Postgres table conforms to it.
 - `trader-elo-rater` skill — the source logic for `services/scoring`.
